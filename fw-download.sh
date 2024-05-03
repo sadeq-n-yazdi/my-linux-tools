@@ -21,7 +21,7 @@ fi
 
 mkdir -p "${MYDIR}/tmp"
 cd "${TMPFLD}"
-wget -v -nv -k -np -N "${ROOTi915}/"
+wget -nv -k -np -N "${ROOTi915}/"
 cd "${MYDIR}"
 [ -f "${MYDIR}/url.list" ] && mv "${MYDIR}/url.list" "${MYDIR}/url.list.old"
 if [ ! -f "${TMPFLD}/index.html" ] ; then
@@ -34,4 +34,3 @@ cat "${TMPFLD}/index.html" \
 wget -N  -nv -p -nH -nd --timestamping -i "${MYDIR}/url.list"
 [ -d ${MYDIR}/ ] && rm -r ${TMPFLD}/
 
-# grep  "${ROOTURL}"  \
