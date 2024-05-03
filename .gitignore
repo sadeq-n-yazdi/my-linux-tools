@@ -1,0 +1,5 @@
+*.bin
+/tmp
+/tmp/**
+**.old
+/url.list
