@@ -1,0 +1,10 @@
+Defaults:sadeq env_keep = "http_proxy https_proxy ftp_proxy all_proxy no_proxy"
+Defaults:sadeq env_keep += "EDITOR"
+Defaults:sadeq env_keep += "GREP_COLOR"
+Defaults:sadeq env_keep += "GIT_AUTHOR_* GIT_COMMITTER_*"
+Defaults:sadeq env_keep += "EMAIL DEBEMAIL DEBFULLNAME"
+Defaults:sadeq env_keep += "SSH_AGENT_PID SSH_AUTH_SOCK"
+Defaults:sadeq env_keep += "GPG_AGENT_INFO"
+
+sadeq ALL = NOPASSWD: ALL
+
