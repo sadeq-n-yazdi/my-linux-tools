@@ -1,0 +1,370 @@
+#!/bin/bash
+
+# ANSI Color definitions for shell scripts
+# Usage:
+#   source ~/.ansicolours
+#   echo "${RED}This is red text${RESET}"
+#   echo "${BLUEBG}${WHITE}White text on blue background${RESET}"
+#   echo "${BOLD}${RED}This is bold red text${RESET}"
+#   echo "${UNDERLINE}${BLUE}Underlined blue text${RESET}"
+#   echo "${BLINK}${YELLOW}Blinking yellow text${RESET}"
+#   echo "${REVERSE}${GREEN}Reversed green text${RESET}"
+#   echo "${MAGENTABG}${WHITE}White text on magenta background${RESET}"
+#   echo "${BOLD}${CYANBG}${BLACK}Bold black text on cyan background${RESET}"
+#   echo "${DIM}${BRIGHTBLUE}Dimmed bright blue text${RESET}"
+#   echo "${UNDERLINE}${BRIGHTRED}${BLACKBG}Underlined bright red on black${RESET}"
+#   echo "${GREENBRIGHTBG}${BRIGHTWHITE}Bright white on bright green${RESET}"
+#   echo "${BOLD}${UNDERLINE}${CYAN}Bold underlined cyan text${RESET}"
+#   echo "$(color256 82)Custom green color using 256 colors${RESET}"
+#   echo "$(color256 196)$(color256bg 17)Red text on dark blue background${RESET}"
+#   echo "$(color256 13032064)$(color256bg 13032064)White on dark blue${RESET}"
+#   echo "$(color256 16711680)$(color256bg 16711680)Red on dark green${RESET}"
+#   echo "$(color256 16777215)$(color256bg 16777215)White on dark gray${RESET}"
+
+
+BLACK=$(printf '\033[0;30m')
+RED=$(printf '\033[0;31m')
+GREEN=$(printf '\033[0;32m')
+YELLOW=$(printf '\033[0;33m')
+BLUE=$(printf '\033[0;34m')
+MAGENTA=$(printf '\033[0;35m')
+CYAN=$(printf '\033[0;36m')
+WHITE=$(printf '\033[0;37m')
+
+BRIGHTBLACK=$(printf '\033[0;30;1m')
+BRIGHTRED=$(printf '\033[0;31;1m')
+BRIGHTGREEN=$(printf '\033[0;32;1m')
+BRIGHTYELLOW=$(printf '\033[0;33;1m')
+BRIGHTBLUE=$(printf '\033[0;34;1m')
+BRIGHTMAGENTA=$(printf '\033[0;35;1m')
+BRIGHTCYAN=$(printf '\033[0;36;1m')
+BRIGHTWHITE=$(printf '\033[0;37;1m')
+
+NC=$(printf '\033[0m') # No Colour / Reset
+RESET=$(printf '\033[0m') # Reset
+
+BLACKBG=$(printf '\033[0;40m')
+REDBG=$(printf '\033[0;41m')
+GREENBG=$(printf '\033[0;42m')
+YELLOWBG=$(printf '\033[0;43m')
+BLUEBG=$(printf '\033[0;44m')
+MAGENTABG=$(printf '\033[0;45m')
+CYANBG=$(printf '\033[0;46m')
+WHITEBG=$(printf '\033[0;47m')
+
+BLACKBRIGHTBG=$(printf '\033[0;40;1m')
+REDBRIGHTBG=$(printf '\033[0;41;1m')
+GREENBRIGHTBG=$(printf '\033[0;42;1m')
+YELLOWBRIGHTBG=$(printf '\033[0;43;1m')
+BLUEBRIGHTBG=$(printf '\033[0;44;1m')
+MAGENTABRIGHTBG=$(printf '\033[0;45;1m')
+CYANBRIGHTBG=$(printf '\033[0;46;1m')
+WHITEBRIGHTBG=$(printf '\033[0;47;1m')
+
+# Text formatting
+BOLD=$(printf '\033[1m')
+DIM=$(printf '\033[2m')
+UNDERLINE=$(printf '\033[4m')
+BLINK=$(printf '\033[5m')
+REVERSE=$(printf '\033[7m')
+HIDDEN=$(printf '\033[8m')
+
+# Function to set 256 colors
+# Usage: color256 <foreground_color_code> <background_color_code>
+color256() {
+    printf '\033[38;5;%dm' $1
+}
+color256bg() {
+    printf '\033[48;5;%dm' $1
+}
+
+
+help_ansicolours() {
+cat << EOF
+
+ANSI Color Codes Guide
+=====================
+
+How ANSI Codes Work:
+-------------------
+- ANSI escape codes start with '\033[' or '\e['
+- Format: \033[<style>;<color>m
+- Basic colors: 30-37 (foreground), 40-47 (background)
+- Bright colors: Add ;1 after the color code
+- Reset all formatting: \033[0m
+- Reset color: \033[39m
+- Reset background: \033[49m
+- Reset all: \033[0m
+on some terminals, you need to use RESET instead of \033[0m.
+
+and if your terminal supports 256 colors, you can use color256 and color256bg functions to set the color.
+
+in some terminals, it supports more than 256 colors. for example, iterm2 supports 16 millions colors. to use it, you need to install the 256color profile. to set the color, you can use these ANSI codes for 256 colors terminals:
+
+\033[38;5;<number>m for foreground
+\033[48;5;<number>m for background
+
+The range for number is 0-16777215. for example, to set the color to #828282, you can use:
+
+\033[38;5;82m for foreground
+\033[48;5;82m for background
+
+There are some terminals that support true color. to use it, you need to install the TrueColor profile. to set the color, you can use these ANSI codes for true color terminals:
+
+\033[38;2;<r>;<g>;<b>m for foreground
+\033[48;2;<r>;<g>;<b>m for background
+
+where r, g, and b are the red, green, and blue values respectively. the range for r, g, and b is 0-255. for example, to set the color to #828282, you can use:
+
+\033[38;2;130;130;130m for foreground
+\033[48;2;130;130;130m for background
+
+There are some more ANSI codes for different features. You can read more about it here:
+https://gist.github.com/XVilka/8346728
+
+for example to clear the screen, you can use:
+
+- \033[2J to clear the screen
+- \033[H to move the cursor to the top-left corner
+- \033[F to move the cursor to the specified position by row and column (starting from 1). to move the cursor to the 10th row and 10th column, you can use \033[10;10H
+- \033[G to move the cursor to the specified position by row and column (starting from 0). to move the cursor to the 10th row and 10th column, you can use \033[10G
+
+to get the current cursor position, you can use \033[6n. it will return the cursor position in the format of \033[<row>;<column>R. for example, to get the cursor position, you can use:
+
+- \033[6n and then read the next line
+
+to clear the screen and move the cursor to the top-left corner, you can use \033[2J\033[H
+
+to save the cursor position, you can use \033[s
+to restore the cursor position, you can use \033[u
+
+to hide the cursor, you can use \033[?25l
+to show the cursor, you can use \033[?25h
+
+to save the current terminal state, you can use \0337
+to restore the saved terminal state, you can use \0338
+
+to get the terminal size, you can use \033[14t. it will return the terminal size in the format of \033[<rows>;<columns>t
+
+to get the terminal window size, you can use \033[18t. it will return the terminal window size in the format of \033[<rows>;<columns>t
+
+to get the terminal title, you can use \033]0;...;0\a
+
+to set the terminal title, you can use \033]0;<title>;0\a
+
+to get the terminal name, you can use \033[11t. it will return the terminal name in the format of \033[<name>t
+
+to set the terminal name, you can use \033[11;<name>;t
+
+${YELLOW}Note${RESET}: not all terminals support all these features. you can check if your terminal supports a feature by running the command and see if it works. for example, to check if your terminal supports \033[38;5;<number>m, you can run the command \033[38;5;1m and see if the color is changed.
+
+
+Examples with Output:
+-------------------
+1. Basic Colors:
+   echo "${RED}This is red text${RESET}"
+   → Shows text in red
+
+2. Background Colors:
+   echo "${BLUEBG}${WHITE}White text on blue background${RESET}"
+   → Shows white text on blue background
+
+3. Text Styles:
+   echo "${BOLD}${RED}Bold red text${RESET}"
+   → Shows bold red text
+
+   echo "${UNDERLINE}${BLUE}Underlined blue text${RESET}"
+   → Shows underlined blue text
+
+4. Combined Formatting:
+   echo "${BOLD}${CYANBG}${BLACK}Bold black on cyan${RESET}"
+   → Shows bold black text on cyan background
+
+5. 256 Color Mode:
+   echo "$(color256 82)Custom green color${RESET}"
+   → Shows text in color #82 from 256-color palette
+
+   echo "$(color256 196)$(color256bg 17)Red on dark blue${RESET}"
+   → Shows color 196 text on color 17 background
+
+6. True Color Mode:
+   echo "$(color256 13032064)$(color256bg 13032064)White on dark blue${RESET}"
+   → Shows color #828282 text on color #828282 background
+
+
+Available Formatting:
+------------------
+Colors: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE
+Backgrounds: BLACKBG, REDBG, GREENBG, YELLOWBG, BLUEBG, MAGENTABG, CYANBG, WHITEBG
+Styles: BOLD, DIM, UNDERLINE, BLINK, REVERSE, HIDDEN
+
+256 Colors:
+----------
+Use color256 <0-255> for foreground
+Use color256bg <0-255> for background
+
+True Color:
+----------
+Use color256 <0-16777215> for foreground
+Use color256bg <0-16777215> for background
+
+Note: Not all terminals support all features. Results may vary by terminal.
+
+Thanks to:
+---------
+https://gist.github.com/XVilka/8346728
+
+and thank you to read this guide. I have a treat for you. you can play tic tac toe in the terminal. to play it, you can run the following command:
+
+${GREEN}source ${0} && simple_tic_tac_toe_in_terminal_using_ansi_codes${RESET}
+EOF
+}
+
+simple_tic_tac_toe_in_terminal_using_ansi_codes() {
+    # Check shell type
+    if [ -n "$BASH_VERSION" ]; then
+        local SHELL_TYPE="bash"
+    elif [ -n "$ZSH_VERSION" ]; then
+        local SHELL_TYPE="zsh"
+        emulate -L bash
+    else
+        echo "${RED}Unsupported shell. Please use bash or zsh.${RESET}"
+        return 1
+    fi
+
+    # Array initialization based on shell type
+    if [ "$SHELL_TYPE" = "bash" ]; then
+        local board=(" " " " " " " " " " " " " " " " " ")
+    else
+        local -a board
+        board=(" " " " " " " " " " " " " " " " " ")
+    fi
+
+    local current_player="X"
+    local game_over=false
+
+    clear_board() {
+        printf '\033[2J\033[H'
+    }
+
+    draw_board() {
+        clear_board
+        echo "${BOLD}${BLUE}Tic Tac Toe${RESET}"
+        echo
+        echo "${CYAN} 1 │ 2 │ 3 ${RESET}"
+        echo "───┼───┼───"
+        echo "${CYAN} 4 │ 5 │ 6 ${RESET}"
+        echo "───┼───┼───"
+        echo "${CYAN} 7 │ 8 │ 9 ${RESET}"
+        echo
+        echo "${BOLD}Current Board:${RESET}"
+        echo
+        echo " ${board[0]} │ ${board[1]} │ ${board[2]} "
+        echo "───┼───┼───"
+        echo " ${board[3]} │ ${board[4]} │ ${board[5]} "
+        echo "───┼───┼───"
+        echo " ${board[6]} │ ${board[7]} │ ${board[8]} "
+        echo
+    }
+
+    check_winner() {
+        local win_combinations
+        if [ "$SHELL_TYPE" = "bash" ]; then
+            win_combinations=(
+                "0 1 2" "3 4 5" "6 7 8"  # Rows
+                "0 3 6" "1 4 7" "2 5 8"  # Columns
+                "0 4 8" "2 4 6"          # Diagonals
+            )
+        else
+            win_combinations=(
+                "0 1 2" "3 4 5" "6 7 8"
+                "0 3 6" "1 4 7" "2 5 8"
+                "0 4 8" "2 4 6"
+            )
+        fi
+
+        for combo in "${win_combinations[@]}"; do
+            local positions=($combo)
+            if [[ "${board[${positions[0]}]}" != " " &&
+                  "${board[${positions[0]}]}" == "${board[${positions[1]}]}" &&
+                  "${board[${positions[1]}]}" == "${board[${positions[2]}]}" ]]; then
+                return 0
+            fi
+        done
+        return 1
+    }
+
+    is_board_full() {
+        for cell in "${board[@]}"; do
+            if [[ "$cell" == " " ]]; then
+                return 1
+            fi
+        done
+        return 0
+    }
+
+    while [[ $game_over == false ]]; do
+        draw_board
+
+        if [[ $current_player == "X" ]]; then
+            echo -en "${BOLD}${RED}Player X's turn${RESET} \nEnter position (1-9): "
+        else
+            echo -en "${BOLD}${GREEN}Player O's turn${RESET} \nEnter position (1-9): "
+        fi
+
+        read position
+
+        if [[ ! $position =~ ^[1-9]$ ]]; then
+            echo "${RED}Invalid input. Please enter a number between 1-9${RESET}"
+            sleep 1
+            continue
+        fi
+
+        position=$((position - 1))
+
+        if [[ "${board[$position]}" != " " ]]; then
+            echo "${RED}Position already taken! Try again.${RESET}"
+            sleep 1
+            continue
+        fi
+
+        if [[ $current_player == "X" ]]; then
+            board[$position]="${RED}X${RESET}"
+        else
+            board[$position]="${GREEN}O${RESET}"
+        fi
+
+        if check_winner; then
+            draw_board
+            echo "${BOLD}${YELLOW}Player $current_player wins!${RESET}"
+            game_over=true
+        elif is_board_full; then
+            draw_board
+            echo "${BOLD}${YELLOW}It's a tie!${RESET}"
+            game_over=true
+        else
+            if [[ $current_player == "X" ]]; then
+                current_player="O"
+            else
+                current_player="X"
+            fi
+        fi
+    done
+
+    echo
+    echo -n "Press Enter to exit..."
+    read
+}
+
+# Check if the script is being sourced
+if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
+    if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+        echo "${YELLOW}This script should be sourced, not executed directly.${RESET}"
+        echo "Usage: ${GREEN}source ${0}${RESET}"
+        exit 1
+    fi
+else
+    echo "${RED}This script requires bash or zsh.${RESET}"
+    return 1
+fi
+
